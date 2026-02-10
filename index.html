@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Juego de Leer para mi Hijo</title>
+    <style>
+        /* Diseño para que sea llamativo y fácil de usar */
+        body { 
+            font-family: 'Comic Sans MS', sans-serif; 
+            text-align: center; 
+            background-color: #f0f8ff; 
+            padding: 50px;
+        }
+        h1 { color: #2c3e50; font-size: 40px; }
+        .boton-opcion { 
+            width: 150px; 
+            height: 150px; 
+            font-size: 80px; 
+            margin: 15px; 
+            cursor: pointer; 
+            border-radius: 25px; 
+            border: 8px solid #ccc;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+        .boton-opcion:active { transform: scale(0.9); }
+        #mensaje { font-size: 30px; font-weight: bold; margin-top: 30px; min-height: 40px; }
+        #boton-inicio {
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-inicio">
+        <h1>¡Hola! ¿Jugamos a leer?</h1>
+        <button id="boton-inicio" onclick="comenzar()">¡Haz clic para empezar!</button>
+    </div>
+
+    <div id="juego" style="display: none;">
+        <h1>¿Dónde está la letra A?</h1>
+        <div id="opciones">
+            <button class="boton-opcion" onclick="verificar('O')">O</button>
+            <button class="boton-opcion" onclick="verificar('A')">A</button>
+            <button class="boton-opcion" onclick="verificar('E')">E</button>
+        </div>
+        <div id="mensaje"></div>
+    </div>
+
+    <script>
+        // Función para que el navegador hable
+        function decir(texto) {
+            const mensajeVoz = new SpeechSynthesisUtterance(texto);
+            mensajeVoz.lang = 'es-ES'; 
+            window.speechSynthesis.speak(mensajeVoz);
+        }
+
+        // Se activa al pulsar el botón verde de inicio
+        function comenzar() {
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('juego').style.display = 'block';
+            decir("¿Dónde está la letra A?");
+        }
+
+        // Lógica de acierto o error
+        function verificar(letraPresionada) {
+            const letraCorrecta = 'A';
+            const msj = document.getElementById('mensaje');
+            
+            // Dice la letra que tocó
+            decir(letraPresionada);
+
+            setTimeout(() => {
+                if (letraPresionada === letraCorrecta) {
+                    msj.innerText = "¡Muy bien! ✅";
+                    msj.style.color = "green";
+                    document.body.style.backgroundColor = "#d4edda";
+                    decir("¡Muy bien! Esa es la A");
+                } else {
+                    msj.innerText = "Inténtalo otra vez ❌";
+                    msj.style.color = "red";
+                    document.body.style.backgroundColor = "#f8d7da";
+                    decir("Esa no es, busca la A");
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
