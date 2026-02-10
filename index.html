@@ -36,11 +36,22 @@
         const vocales = ['A', 'E', 'I', 'O', 'U'];
         let nivelActual = 0;
 
-        function decir(texto) {
-            const msg = new SpeechSynthesisUtterance(texto);
-            msg.lang = 'es-ES';
-            window.speechSynthesis.speak(msg);
-        }
+    function decir(texto) {
+        // Cancelamos cualquier voz que esté hablando para que no se amontonen
+        window.speechSynthesis.cancel();
+    
+        const mensajeVoz = new SpeechSynthesisUtterance();
+        
+        // Limpiamos el texto: quitamos signos raros y aseguramos minúsculas
+        let textoLimpio = texto.replace('¿', '').replace('?', '').toLowerCase();
+        
+        mensajeVoz.text = textoLimpio;
+        mensajeVoz.lang = 'es-ES'; // Español de España
+        mensajeVoz.rate = 0.9;      // Un poquito más lento para que el niño lo entienda mejor
+        mensajeVoz.pitch = 1.1;     // Un tono ligeramente más agudo (más amigable)
+    
+        window.speechSynthesis.speak(mensajeVoz);
+    }
 
         function comenzar() {
             document.getElementById('pantalla-inicio').style.display = 'none';
