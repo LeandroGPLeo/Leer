@@ -83,18 +83,23 @@
         }
 
         function verificar(letraPresionada) {
-            const correcta = vocales[nivelActual];
-            if (letraPresionada === correcta) {
-                decir("¡Muy bien! Esa es la " + correcta);
-                document.getElementById('mensaje').innerText = "¡Excelente! 🌟";
-                document.body.style.backgroundColor = "#d4edda";
-                document.getElementById('btn-siguiente').style.display = 'inline-block';
-            } else {
-                decir("Esa es la " + letraPresionada + ". Busca la " + correcta);
-                document.getElementById('mensaje').innerText = "Casi... ¡inténtalo de nuevo! 💪";
-                document.body.style.backgroundColor = "#f8d7da";
-            }
-        }
+    const correcta = vocales[nivelActual];
+    
+    if (letraPresionada === correcta) {
+        // Usamos minúsculas para que el navegador diga "i" y no "primera"
+        decir("¡Muy bien! Esa es la " + correcta.toLowerCase());
+        
+        document.getElementById('mensaje').innerText = "¡Excelente! 🌟";
+        document.body.style.backgroundColor = "#d4edda";
+        document.getElementById('btn-siguiente').style.display = 'inline-block';
+    } else {
+        // Aquí también convertimos ambas letras a minúsculas para la voz
+        decir("Esa es la " + letraPresionada.toLowerCase() + ". Busca la " + correcta.toLowerCase());
+        
+        document.getElementById('mensaje').innerText = "Casi... ¡inténtalo de nuevo! 💪";
+        document.body.style.backgroundColor = "#f8d7da";
+    }
+}
 
         function siguienteNivel() {
             nivelActual++;
