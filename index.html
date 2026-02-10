@@ -36,20 +36,21 @@
         const vocales = ['A', 'E', 'I', 'O', 'U'];
         let nivelActual = 0;
 
-    function decir(texto) {
-        // Cancelamos cualquier voz que esté hablando para que no se amontonen
+    function decir(texto) 
+    {
         window.speechSynthesis.cancel();
-    
         const mensajeVoz = new SpeechSynthesisUtterance();
         
-        // Limpiamos el texto: quitamos signos raros y aseguramos minúsculas
-        let textoLimpio = texto.replace('¿', '').replace('?', '').toLowerCase();
-        
-        mensajeVoz.text = textoLimpio;
-        mensajeVoz.lang = 'es-ES'; // Español de España
-        mensajeVoz.rate = 0.9;      // Un poquito más lento para que el niño lo entienda mejor
-        mensajeVoz.pitch = 1.1;     // Un tono ligeramente más agudo (más amigable)
+        // Si el texto es solo una letra, la convertimos en algo que el iPhone lea bien
+        let sonido = texto.toLowerCase();
+        if (sonido === 'a') sonido = 'letra ah';
+        if (sonido === 'e') sonido = 'letra eh';
+        if (sonido === 'i') sonido = 'letra i'; // Aquí ya no debería decir "primera"
+        if (sonido === 'o') sonido = 'letra oh';
+        if (sonido === 'u') sonido = 'letra uh';
     
+        mensajeVoz.text = sonido;
+        mensajeVoz.lang = 'es-ES';
         window.speechSynthesis.speak(mensajeVoz);
     }
 
