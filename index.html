@@ -2,93 +2,108 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Juego de Leer para mi Hijo</title>
+    <title>Juego de Vocales</title>
     <style>
-        /* Diseño para que sea llamativo y fácil de usar */
-        body { 
-            font-family: 'Comic Sans MS', sans-serif; 
-            text-align: center; 
-            background-color: #f0f8ff; 
-            padding: 50px;
-        }
-        h1 { color: #2c3e50; font-size: 40px; }
-        .boton-opcion { 
-            width: 150px; 
-            height: 150px; 
-            font-size: 80px; 
-            margin: 15px; 
-            cursor: pointer; 
-            border-radius: 25px; 
-            border: 8px solid #ccc;
-            background-color: white;
-            transition: transform 0.2s;
-        }
-        .boton-opcion:active { transform: scale(0.9); }
-        #mensaje { font-size: 30px; font-weight: bold; margin-top: 30px; min-height: 40px; }
-        #boton-inicio {
-            padding: 20px 40px;
-            font-size: 24px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+        body { font-family: 'Comic Sans MS', sans-serif; text-align: center; background-color: #f0f8ff; padding: 30px; }
+        .boton-opcion { width: 120px; height: 120px; font-size: 60px; margin: 10px; cursor: pointer; border-radius: 20px; border: 5px solid #ccc; background: white; }
+        #mensaje { font-size: 28px; margin: 20px; font-weight: bold; }
+        .controles { margin-top: 20px; }
+        button#btn-siguiente { padding: 15px 30px; font-size: 20px; background-color: #2196F3; color: white; border: none; border-radius: 10px; display: none; cursor: pointer; }
+        button#btn-repetir { padding: 10px 20px; font-size: 16px; background-color: #ff9800; color: white; border: none; border-radius: 50px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio">
-        <h1>¡Hola! ¿Jugamos a leer?</h1>
-        <button id="boton-inicio" onclick="comenzar()">¡Haz clic para empezar!</button>
+        <h1>¡Hola! ¿Aprendemos las vocales?</h1>
+        <button onclick="comenzar()" style="padding: 20px; font-size: 24px; background: #4CAF50; color: white; border: none; border-radius: 10px;">¡Empezar!</button>
     </div>
 
     <div id="juego" style="display: none;">
-        <h1>¿Dónde está la letra A?</h1>
-        <div id="opciones">
-            <button class="boton-opcion" onclick="verificar('O')">O</button>
-            <button class="boton-opcion" onclick="verificar('A')">A</button>
-            <button class="boton-opcion" onclick="verificar('E')">E</button>
-        </div>
+        <h1 id="pregunta">¿Dónde está la letra?</h1>
+        
+        <button id="btn-repetir" onclick="reproducirPregunta()">🔊 Escuchar otra vez</button>
+        
+        <div id="opciones" style="margin-top: 30px;">
+            </div>
+
         <div id="mensaje"></div>
+        
+        <button id="btn-siguiente" onclick="siguienteNivel()">¡Siguiente letra! ⏭️</button>
     </div>
 
     <script>
-        // Función para que el navegador hable
+        const vocales = ['A', 'E', 'I', 'O', 'U'];
+        let nivelActual = 0;
+
         function decir(texto) {
-            const mensajeVoz = new SpeechSynthesisUtterance(texto);
-            mensajeVoz.lang = 'es-ES'; 
-            window.speechSynthesis.speak(mensajeVoz);
+            const msg = new SpeechSynthesisUtterance(texto);
+            msg.lang = 'es-ES';
+            window.speechSynthesis.speak(msg);
         }
 
-        // Se activa al pulsar el botón verde de inicio
         function comenzar() {
             document.getElementById('pantalla-inicio').style.display = 'none';
             document.getElementById('juego').style.display = 'block';
-            decir("¿Dónde está la letra A?");
+            cargarNivel();
         }
 
-        // Lógica de acierto o error
-        function verificar(letraPresionada) {
-            const letraCorrecta = 'A';
-            const msj = document.getElementById('mensaje');
-            
-            // Dice la letra que tocó
-            decir(letraPresionada);
+        function reproducirPregunta() {
+            decir("¿Dónde está la letra " + vocales[nivelActual] + "?");
+        }
 
-            setTimeout(() => {
-                if (letraPresionada === letraCorrecta) {
-                    msj.innerText = "¡Muy bien! ✅";
-                    msj.style.color = "green";
-                    document.body.style.backgroundColor = "#d4edda";
-                    decir("¡Muy bien! Esa es la A");
-                } else {
-                    msj.innerText = "Inténtalo otra vez ❌";
-                    msj.style.color = "red";
-                    document.body.style.backgroundColor = "#f8d7da";
-                    decir("Esa no es, busca la A");
-                }
-            }, 800);
+        function cargarNivel() {
+            const letraCorrecta = vocales[nivelActual];
+            document.getElementById('pregunta').innerText = "¿Dónde está la letra " + letraCorrecta + "?";
+            document.getElementById('mensaje').innerText = "";
+            document.getElementById('btn-siguiente').style.display = 'none';
+            document.body.style.backgroundColor = "#f0f8ff";
+            
+            // Generar opciones aleatorias (la correcta y dos más)
+            const contenedor = document.getElementById('opciones');
+            contenedor.innerHTML = "";
+            
+            // Creamos 3 opciones (la correcta y 2 más de la lista)
+            let opciones = [letraCorrecta];
+            while(opciones.length < 3) {
+                let azar = vocales[Math.floor(Math.random() * vocales.length)];
+                if(!opciones.includes(azar)) opciones.push(azar);
+            }
+            opciones.sort(() => Math.random() - 0.5); // Mezclar botones
+
+            opciones.forEach(letra => {
+                const btn = document.createElement('button');
+                btn.className = 'boton-opcion';
+                btn.innerText = letra;
+                btn.onclick = () => verificar(letra);
+                contenedor.appendChild(btn);
+            });
+
+            reproducirPregunta();
+        }
+
+        function verificar(letraPresionada) {
+            const correcta = vocales[nivelActual];
+            if (letraPresionada === correcta) {
+                decir("¡Muy bien! Esa es la " + correcta);
+                document.getElementById('mensaje').innerText = "¡Excelente! 🌟";
+                document.body.style.backgroundColor = "#d4edda";
+                document.getElementById('btn-siguiente').style.display = 'inline-block';
+            } else {
+                decir("Esa es la " + letraPresionada + ". Busca la " + correcta);
+                document.getElementById('mensaje').innerText = "Casi... ¡inténtalo de nuevo! 💪";
+                document.body.style.backgroundColor = "#f8d7da";
+            }
+        }
+
+        function siguienteNivel() {
+            nivelActual++;
+            if (nivelActual < vocales.length) {
+                cargarNivel();
+            } else {
+                decir("¡Felicidades! Terminamos todas las vocales.");
+                document.getElementById('juego').innerHTML = "<h1>¡Eres un genio! 🏆</h1><button onclick='location.reload()'>Volver a jugar</button>";
+            }
         }
     </script>
 </body>
